@@ -6,13 +6,14 @@ const now = new Date().toISOString();
 
 test("NEEC facility catalog never invents current capacity", () => {
   const facilities = normalizeNeecFacilities({ features: [
-    { geometry: { type: "Point", coordinates: [-71.06, 42.36] }, properties: { id: 42, name: "Example Hospital", state: "MA", city: "Boston", icuOccupancy: 92 } },
+    { geometry: { type: "Point", coordinates: [-71.06, 42.36] }, properties: { id: 42, name: "Example Hospital", state: "MA", city: "Boston", LOADDATE: "2023-12-15T05:00:00Z", icuOccupancy: 92 } },
     { geometry: { type: "Point", coordinates: [null, 42] }, properties: { state: "ME" } }
   ] }, now);
   assert.equal(facilities.length, 1);
   assert.equal(facilities[0].name, "Example Hospital");
   assert.equal(facilities[0].icuOccupancy, null);
   assert.equal(facilities[0].edBoarding, null);
+  assert.equal(facilities[0].provenance.observedAt, "2023-12-15T05:00:00.000Z");
 });
 
 test("USGS hospital locations remain a location catalog with blank capacity", () => {
@@ -58,6 +59,7 @@ test("NWS alerts retain their source class and do not become clinical incidents"
   assert.equal(alerts[0].kind, "NWS weather alert");
   assert.equal(alerts[0].severity, "high");
   assert.equal(alerts[0].provenance.source, "National Weather Service");
+  assert.ok(alerts[0].id.startsWith("nws-MA-"));
 });
 
 test("GeoBlackout parser returns the newest national chart value without a state estimate", () => {

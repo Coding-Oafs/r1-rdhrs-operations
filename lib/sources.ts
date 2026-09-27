@@ -46,12 +46,13 @@ export function normalizeNeecFacilities(payload: unknown, fetchedAt: string): Fa
     const lat = number(coordinates[1]);
     const state = text(properties.state).toUpperCase();
     if (!isStateCode(state) || lat === null || lng === null || Math.abs(lat) > 90 || Math.abs(lng) > 180) return [];
+    const sourceRecordDate = iso(properties.LOADDATE ?? properties.loaddate);
     const provenance: Provenance = {
       source: "NEEC healthcare facility catalog",
       status: "live",
-      observedAt: null,
+      observedAt: sourceRecordDate,
       fetchedAt,
-      detail: "Actual facility location from NEEC. The catalog does not provide current ICU occupancy, ED boarding, or telehealth capability."
+      detail: "Actual facility location from NEEC. The source load date is a catalog date, not a live facility check. ICU occupancy, ED boarding, and telehealth capability are not provided."
     };
     return [{
       id: String(properties.id ?? `neec-${index}`), name: text(properties.name) || "Unnamed facility",
@@ -209,7 +210,7 @@ export function normalizeNwsAlerts(payload: unknown, state: StateCode, fetchedAt
     const severityText = text(properties.severity).toLowerCase();
     const severity = severityText === "extreme" ? "critical" : severityText === "severe" ? "high" : severityText === "moderate" ? "moderate" : "low";
     return [{
-      id: text(properties.id) || `nws-${state}-${index}`, name: event, kind: "NWS weather alert", state,
+      id: `nws-${state}-${text(properties.id) || index}`, name: event, kind: "NWS weather alert", state,
       locality: text(properties.areaDesc) || state, lat, lng, severity,
       status: "Active alert", openedAt: iso(properties.sent) || fetchedAt,
       note: text(properties.headline) || text(properties.description).slice(0, 200),
