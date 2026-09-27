@@ -2,6 +2,14 @@
 
 A standalone Next.js prototype for Region 1 healthcare emergency coordination. It follows the [Figma command-center design](https://www.figma.com/design/JBnzBZsIUERm8PD9bUUVNp) and the linked [Undermind evidence workspace](https://app.undermind.ai/projects/8c213a78-9b27-455b-bf0a-6f4ead60a360?path=/GIS-enabled%20healthcare%20surge%20and%20disaster%20situational%20awareness). The NEEC/NEDPC repository is a read-only source system; this app is a separate repository and does not change it.
 
+## Hosted prototype
+
+- Production: [r1-rdhrs-operations.vercel.app](https://r1-rdhrs-operations.vercel.app)
+- Repository: [Coding-Oafs/r1-rdhrs-operations](https://github.com/Coding-Oafs/r1-rdhrs-operations)
+- The Vercel project is connected to GitHub. Commits to `main` trigger production builds. Vercel Authentication is currently enabled for the deployment; team sign-in may be required to view it.
+- The hosted app has no `NEEC_API_BASE_URL` configured. It uses direct public USGS, NWS, and GeoBlackout sources and marks the NEEC feeds unavailable. On the first production check it returned 267 USGS facility locations, 27 NWS alerts, and a national internet report trend value of 5. These values are time-sensitive, not fixtures.
+- Local `.env.local` settings and credentials are excluded from Git and Vercel uploads. Set a network-reachable NEEC API URL as a **server-side** Vercel environment variable when one is available; `localhost:4173` cannot be reached from Vercel.
+
 ## Run locally
 
 ```bash
